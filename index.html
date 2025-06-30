@@ -1,0 +1,127 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="ja">
+
+  <head>
+     <script type="text/x-mathjax-config">
+
+       MathJax.Hub.Config({TeX:{equationNumbers:{autoNumber:"AMS"}}});
+
+    </script>
+
+    <script type="text/javascript" async 
+
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
+
+    </script>
+
+  </head>
+
+<body>
+<h3>１自由度粘弾性振動系(カルマンフィルターの適用)</h3>
+    <p><a href="https://aoyamakohbo.github.io/VscElsVib1D/">１自由度粘弾性振動系の離散時間状態方程式</a>は次式となります。</p>
+    \begin{align}
+      \left.
+      \begin{array}{@{\,}rl}
+      \mathbf{x}(n+1)&=~\mathbf{P}\mathbf{x}(n)+\mathbf{Q}u(n)+\mathbf{w}(n)\\
+      y(n)&=~\mathbf{C}\mathbf{x}(n)+v(n)
+      \end{array}\label{eq:RtnEqn}
+      \right\}
+    \end{align}
+    <p>ここに、\(\mathbf{u}\)は入力、\(\mathbf{x}\)は状態量、\(y\)は出力(変位)、
+      \(\mathbf{P}\)は遷移行列、\(\mathbf{Q}\)は入力係数行列、\(\mathbf{C}\)は出力係数行列、
+      \(v\)は出力ノイズ、\(\mathbf{w}\)は入力ノイズです。</p>
+
+<p>\(\omega_n=6.28×10\)[rad/s]、\(\zeta=0.2\)、サンプリング周期\(T=0.005\)[s]として
+ 係数行列\(\mathbf P\)、\(\mathbf Q\)は次式となります。</p>
+  \begin{align}
+    \mathbf{P}=
+      \left[
+        \begin{array}{@{\,}cc}
+          0.9531&0.004222\\
+          -18.23&0.8370
+        \end{array}
+      \right],~~~
+    \mathbf{Q}=
+      \left[
+        \begin{array}{@{\,}c}
+          -0.04691\\
+          18.23
+        \end{array}
+      \right],~~~
+    \mathbf{C}=[1~~0].
+    \label{eq:MatPQ}
+  \end{align}
+
+<p>離散時間状態方程式\eqref{eq:RtnEqn}、\eqref{eq:MatPQ}の
+  <a href="https://aoyamakohbo.github.io/KalmanFltr/">定常カルマンフィルタ</a>は次式となります。</p>
+\begin{align}
+  \left.
+    \begin{array}{@{\,}rl}
+      {\mathbf{q}}(n+1)&=~\mathbf{P}\hat{\mathbf{x}}(n)+\mathbf{Q}\mathbf{u}(n)\\
+      e(n)&=~y(n)-\mathbf{C}\mathbf{q}(n)\\
+      \hat{\mathbf{x}}(n)&=~{\mathbf{q}}(n)+\mathbf{K}\mathbf{e}(n)    
+    \end{array}\label{eq:KalmanFilt}
+  \right\}  
+\end{align}
+
+  \begin{align}
+    \mathbf{V}=5.271\times 10^{-5},~~~
+    \mathbf{W}=
+      \left[
+        \begin{array}{@{\,}cc}
+          1.201\times 10^{-5}&0\\
+          0&1.8314
+        \end{array}
+      \right].
+    \label{eq:MatVW}
+  \end{align}
+
+<p><a href="https://aoyamakohbo.github.io/Riccati/">Riccati方程式</a>:</p>
+    \begin{align}
+      {\mathbf Z}(n+1)={\mathbf A}{\mathbf Z}(n){\mathbf A}^T-{\mathbf A}{\mathbf Z}(n){\mathbf C}^T({\mathbf C}{\mathbf Z}(n){\mathbf C}^T+{\mathbf V})^{-1}{\mathbf C}{\mathbf Z}(n){\mathbf A}^T+{\mathbf W}.\label{eq:MatP_A}
+    \end{align}
+
+<p>十分大きな\(n\)に対してRiccati方程式の解\({\mathbf Z}(n)\)は定数行列\(\mathbf Z\)に収束します。</p>
+  \begin{align}
+    \mathbf{Z}=
+      \left[
+        \begin{array}{@{\,}cc}
+          4.34\times 10^{-4}&6.29\times 10^{-3}\\
+          6.29\times 10^{-3}&5.990\times 10^{-1}
+        \end{array}
+      \right].
+    \label{eq:Mat_Z}
+  \end{align}
+
+<p>カルマンフィルター\eqref{eq:KalmanFilt}に用いるカルマンゲイン\({\mathbf K}\)はRiccati方程式の解\({\mathbf Z}\)を用いて次式で与えられます。</p>
+  \begin{align}
+    \mathbf{K}={\mathbf Z}{\mathbf C}^T\{{\mathbf C}{\mathbf Z}{\mathbf C}^T+{\mathbf V}\}^{-1}. \label{eq:KalmanGain}
+  \end{align}
+
+  <p>式\eqref{eq:MatPQ}、\eqref{eq:MatVW}、\eqref{eq:Mat_Z}の行列\(\mathbf{C}\)、\(\mathbf{V}\)、\(\mathbf{Z}\)を
+    式\eqref{eq:KalmanGain}に代入します。</p>
+  \begin{align}
+    \mathbf{K}=
+      \left[
+        \begin{array}{@{\,}c}
+          7.597\times 10^{-2}\\
+          1.092
+        \end{array}
+      \right].
+    \label{eq:Mat_K}
+  \end{align}
+
+<p>初期値\(x(0)=0\)、\(\dot x(0)=0\)とし、入力\(\)を次式の正弦振動で与えます。</p>
+\begin{align}
+u(n) = \sin(2\pi nfT)\label{eq:SineInp}
+\end{align}
+
+<p>入力正弦波\eqref{eq:SineInp}の振幅は\(1\)[mm]、振動数は\(f=10\)[Hz]です。</p>
+<p>これらの図では入力\(u(n)\)は青線、出力\(y(n)\)を赤線で示しています。</p>
+<img src="Vib1DEG.jpg" width=600px>
+
+<p><a href="https://aoyamakohbo.github.io/Craftlogy/">->TOP</a></p>
+</body>
+
+</html>
