@@ -30,9 +30,10 @@
     \end{align}
     <p>ここに、\(\mathbf{u}\)は入力、\(\mathbf{x}\)は状態量、\(y\)は出力(変位)、
       \(\mathbf{P}\)は遷移行列、\(\mathbf{Q}\)は入力係数行列、\(\mathbf{C}\)は出力係数行列、
-      \(v\)は出力ノイズ、\(\mathbf{w}\)は入力ノイズです。</p>
+      \(v\)は出力ノイズ、\(\mathbf{w}\)は入力ノイズです。
+      出力ノイズ\(v\)と\(\mathbf{w}\)は乱数により発生させます。</p>
 
-<p>\(\omega_n=6.28×10\)[rad/s]、\(\zeta=0.2\)、サンプリング周期\(T=0.005\)[s]として
+<p>\(\omega_n=6.28\times 10\)[rad/s]、\(\zeta=0.2\)、サンプリング周期\(T=0.005\)[s]として
  係数行列\(\mathbf P\)、\(\mathbf Q\)は次式となります。</p>
   \begin{align}
     \mathbf{P}=
@@ -65,6 +66,7 @@
   \right\}  
 \end{align}
 
+<p>出力ノイズと入力ノイズの共分散行列は次式となります。</p>
   \begin{align}
     \mathbf{V}=5.271\times 10^{-5},~~~
     \mathbf{W}=
@@ -77,12 +79,14 @@
     \label{eq:MatVW}
   \end{align}
 
-<p><a href="https://aoyamakohbo.github.io/Riccati/">Riccati方程式</a>:</p>
+<p>式\eqref{eq:MatPQ}と\eqref{eq:MatVW}で与えた係数行列\(\mathbf{P}\)と
+  共分散行列\(\mathbf{V}\)、\(\mathbf{W}\)を用いて
+  <a href="https://aoyamakohbo.github.io/Riccati/">Riccati方程式</a>を計算します。</p>
     \begin{align}
-      {\mathbf Z}(n+1)={\mathbf A}{\mathbf Z}(n){\mathbf A}^T-{\mathbf A}{\mathbf Z}(n){\mathbf C}^T({\mathbf C}{\mathbf Z}(n){\mathbf C}^T+{\mathbf V})^{-1}{\mathbf C}{\mathbf Z}(n){\mathbf A}^T+{\mathbf W}.\label{eq:MatP_A}
+      {\mathbf Z}(n+1)={\mathbf P}{\mathbf Z}(n){\mathbf P}^T-{\mathbf P}{\mathbf Z}(n){\mathbf C}^T({\mathbf C}{\mathbf Z}(n){\mathbf C}^T+{\mathbf V})^{-1}{\mathbf C}{\mathbf Z}(n){\mathbf P}^T+{\mathbf W}.\label{eq:MatP_A}
     \end{align}
 
-<p>十分大きな\(n\)に対してRiccati方程式の解\({\mathbf Z}(n)\)は定数行列\(\mathbf Z\)に収束します。</p>
+<p>十分大きな\(n\)に対してRiccati方程式の解\({\mathbf Z}(n)\)は定数行列\(\mathbf Z\)(\(={\mathbf Z}(n+1)={\mathbf Z}(n)\))に収束します。</p>
   \begin{align}
     \mathbf{Z}=
       \left[
@@ -100,7 +104,7 @@
   \end{align}
 
   <p>式\eqref{eq:MatPQ}、\eqref{eq:MatVW}、\eqref{eq:Mat_Z}の行列\(\mathbf{C}\)、\(\mathbf{V}\)、\(\mathbf{Z}\)を
-    式\eqref{eq:KalmanGain}に代入します。</p>
+    式\eqref{eq:KalmanGain}に代入してカルマンゲイン\(\mathbf{K}\)を計算します。</p>
   \begin{align}
     \mathbf{K}=
       \left[
@@ -117,9 +121,23 @@
 u(n) = \sin(2\pi nfT)\label{eq:SineInp}
 \end{align}
 
-<p>入力正弦波\eqref{eq:SineInp}の振幅は\(1\)[mm]、振動数は\(f=10\)[Hz]です。</p>
-<p>これらの図では入力\(u(n)\)は青線、出力\(y(n)\)を赤線で示しています。</p>
-<img src="Vib1DEG.jpg" width=600px>
+<p>入力正弦波\eqref{eq:SineInp}の振動数\(f=10\)[Hz]です。</p>
+
+<p>下図にカルマンフィルターの効果を示します。
+  離散時間状態方程式により計算した状態量(変位\(x(n)\)と速度\(\dot x(n)\))を赤い点、
+  カルマンフィルターにより計算した状態量(変位\(x(n)\)と速度\(\dot x(n)\))を青線で示しています。</p>
+<img src="KlmVib1D.jpg" width=400px>
+
+<p>この計算結果により、カルマンフィルターが離散時間状態方程式の状態量(変位\(x(n)\)と速度\(\dot x(n)\))を再現できていることを確認できます。</p>
+
+<p>下図に数値微分で速度\(\dot x(n)\)を計算した結果を示します。
+  離散時間状態方程式により計算した速度\(\dot x(n)\)を赤い点、
+  離散時間状態方程式の変位\(x(n)\)を数値微分\(\dot x(n) = (x(n)-x(n-1)/\varDelta t)\)により計算した速度を青線で示しています。</p>
+<img src="NumDif.jpg" width=400px>
+
+<p>数値微分によりノイズが拡大されるために速度\(\dot x(n)\)の形状が乱れていることを確認できます。
+  これらの数値計算の結果からカルマンフィルターによる状態量推定の効果を確認できます。
+</p>
 
 <p><a href="https://aoyamakohbo.github.io/Craftlogy/">->TOP</a></p>
 </body>
