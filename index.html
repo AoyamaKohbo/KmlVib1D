@@ -33,6 +33,18 @@
       \(v\)は出力ノイズ、\(\mathbf{w}\)は入力ノイズです。
       出力ノイズ\(v\)と\(\mathbf{w}\)は乱数により発生させます。</p>
 
+<p>離散時間状態方程式\eqref{eq:RtnEqn}の
+  <a href="https://aoyamakohbo.github.io/KalmanFltr/">定常カルマンフィルタ</a>は次式となります。</p>
+\begin{align}
+  \left.
+    \begin{array}{@{\,}rl}
+      {\mathbf{q}}(n+1)&=~\mathbf{P}\hat{\mathbf{x}}(n)+\mathbf{Q}\mathbf{u}(n)\\
+      e(n)&=~y(n)-\mathbf{C}\mathbf{q}(n)\\
+      \hat{\mathbf{x}}(n)&=~{\mathbf{q}}(n)+\mathbf{K}\mathbf{e}(n)    
+    \end{array}\label{eq:KalmanFilt}
+  \right\}  
+\end{align}
+
 <p>\(\omega_n=6.28\times 10\)[rad/s]、\(\zeta=0.2\)、サンプリング周期\(T=0.005\)[s]として
  係数行列\(\mathbf P\)、\(\mathbf Q\)は次式となります。</p>
   \begin{align}
@@ -53,18 +65,6 @@
     \mathbf{C}=[1~~0].
     \label{eq:MatPQ}
   \end{align}
-
-<p>離散時間状態方程式\eqref{eq:RtnEqn}、\eqref{eq:MatPQ}の
-  <a href="https://aoyamakohbo.github.io/KalmanFltr/">定常カルマンフィルタ</a>は次式となります。</p>
-\begin{align}
-  \left.
-    \begin{array}{@{\,}rl}
-      {\mathbf{q}}(n+1)&=~\mathbf{P}\hat{\mathbf{x}}(n)+\mathbf{Q}\mathbf{u}(n)\\
-      e(n)&=~y(n)-\mathbf{C}\mathbf{q}(n)\\
-      \hat{\mathbf{x}}(n)&=~{\mathbf{q}}(n)+\mathbf{K}\mathbf{e}(n)    
-    \end{array}\label{eq:KalmanFilt}
-  \right\}  
-\end{align}
 
 <p>出力ノイズと入力ノイズの共分散行列は次式となります。</p>
   \begin{align}
